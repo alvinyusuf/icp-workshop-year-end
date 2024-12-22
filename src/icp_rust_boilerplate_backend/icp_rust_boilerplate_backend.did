@@ -1,3 +1,57 @@
+type Budget = record {
+  id : nat64;
+  month : nat8;
+  year : nat32;
+  limit : float64;
+  spent : float64;
+  category : Category;
+};
+type BudgetPayload = record {
+  month : nat8;
+  year : nat32;
+  limit : float64;
+  category : Category;
+};
+type Category = variant {
+  Food;
+  Salary;
+  Entertainment;
+  Others;
+  Transportation;
+  Utilities;
+};
+type Error = variant {
+  InvalidInput : record { msg : text };
+  NotFound : record { msg : text };
+};
+type Result = variant { Ok : Transaction; Err : Error };
+type Result_1 = variant { Ok : Budget; Err : Error };
+type Summary = record {
+  balance : float64;
+  total_expense : float64;
+  total_income : float64;
+};
+type Transaction = record {
+  id : nat64;
+  transaction_type : TransactionType;
+  date : nat64;
+  description : text;
+  category : Category;
+  amount : float64;
+};
+type TransactionPayload = record {
+  transaction_type : TransactionType;
+  description : text;
+  category : Category;
+  amount : float64;
+};
+type TransactionType = variant { Income; Expense };
 service : {
-    "greet": (text) -> (text) query;
+  add_transaction : (TransactionPayload) -> (Result);
+  get_balance : () -> (float64) query;
+  get_monthly_summary : (nat8, nat32) -> (Summary) query;
+  get_remaining_budget : (Category, nat8, nat32) -> (float64) query;
+  get_transaction : (nat64) -> (Result) query;
+  get_transactions_by_category : (Category) -> (vec Transaction) query;
+  set_budget : (BudgetPayload) -> (Result_1);
 }
